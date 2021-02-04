@@ -108,9 +108,34 @@ def make_board(board_string):
     return board
 
 
-
 def find(board, word):
     """Can word be found in board?"""
+    def follow(start_row, start_col, word, already_visited=[]):
+        if not len(word):
+            return True
+        already_visited.append(f'{start_row}-{start_col}')
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if (i == 0 or j == 0) and (i != 0 or j != 0):
+                    next_row = start_row + i
+                    if next_row >= 0 and next_row < len(board):
+                        next_col = start_col + j
+                        if next_col >= 0 and next_col < len(board[next_row]):
+                            if(board[next_row][next_col] == word[0] and f'{next_row}-{next_col}' not in already_visited):
+                                next_word = word[1:]
+                                found = follow(next_row, next_col, next_word, [*already_visited])
+                                if found:
+                                    return True
+        return False
+
+    first_letter = word[0]
+    word_frag = word[1:]
+    for i in range(0, len(board)):
+        for j in range(0, len(board[i])):
+            if board[i][j] == first_letter:
+                if follow(i, j, word_frag):
+                    return True
+    return False
 
 
 if __name__ == '__main__':

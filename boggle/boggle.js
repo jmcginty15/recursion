@@ -53,6 +53,39 @@ function makeBoard(boardString) {
 function find(board, word) {
   /** Can word be found in board? */
   // TODO
+  const firstLetter = word[0];
+  const wordFrag = word.slice(1);
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === firstLetter) {
+        if (follow(i, j, wordFrag)) return true;
+      }
+    }
+  }
+  return false;
+
+  function follow(startRow, startCol, word, alreadyVistited = []) {
+    if (!word.length) return true;
+    alreadyVistited.push(`${startRow}-${startCol}`);
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if ((i === 0 || j === 0) && (i != 0 || j != 0)) {
+          const nextRow = startRow + i;
+          if (nextRow >= 0 && nextRow < board.length) {
+            const nextCol = startCol + j;
+            if (nextCol >= 0 && nextCol < board[nextRow].length) {
+              if (board[nextRow][nextCol] === word[0] && !alreadyVistited.includes(`${nextRow}-${nextCol}`)) {
+                const nextWord = word.slice(1);
+                const found = follow(nextRow, nextCol, nextWord, [...alreadyVistited]);
+                if (found) return true;
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
 }
 
 // EXAMPLE TEST
